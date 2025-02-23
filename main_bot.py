@@ -82,5 +82,5 @@ def travel_assistant():
     
     print("\nWanderBot: Let me know if you need modifications or further details!")
     
-if name == "main":
+if __name__ == "main":
     travel_assistant()

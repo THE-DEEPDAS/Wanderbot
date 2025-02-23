@@ -60,6 +60,12 @@ def main():
         <style>
         .main {
             background-color: #f0f8ff;  /* Light blue background */
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;  /* Ensure the main content takes at least the full height of the viewport */
+        }
+        .content {
+            flex: 1;  /* Allow the content to grow and take available space */
         }
         .header {
             color: #2e8b57;  /* Sea green */
@@ -71,6 +77,13 @@ def main():
             background-color: #ffe4e1;  /* Misty rose */
             padding: 10px;
             border-radius: 5px;
+        }
+        .card {
+            background-color: #ffffff;  /* White background for cards */
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
         }
         </style>
         """,
@@ -87,26 +100,34 @@ def main():
     travel_preference = st.sidebar.selectbox("How would you like to travel?", ["Flight", "Train"])
     days = st.sidebar.number_input("How many days do you plan to stay?", min_value=1, max_value=30, value=5)
     
-    if st.sidebar.button("Plan My Trip"):
-        st.markdown(f"<h3 class='header'>Nice to meet you, **{user_name}**! 🎉</h3>", unsafe_allow_html=True)
-        
-        if travel_preference.lower() == "flight":
-            user_location_iata = get_iata_code(user_location)
-            destination_iata = get_iata_code(destination)
-            flights = get_flight_options(user_location_iata, destination_iata)
-            st.markdown("<h3 class='subheader'>Available Flights: ✈️</h3>", unsafe_allow_html=True)
-            for flight in flights:
-                st.markdown(f"- {flight}")
-        
-        st.markdown("<h3 class='subheader'>Generating your detailed itinerary with timestamps... ⏳</h3>", unsafe_allow_html=True)
-        itinerary = get_itinerary(destination, experience, days)
-        st.markdown(f"<h3 class='header'>Here's your plan for **{destination}**:</h3>\n{itinerary}", unsafe_allow_html=True)
-        
-        st.markdown("<h3 class='subheader'>Finding the best hotel options... 🏨</h3>", unsafe_allow_html=True)
-        hotels = get_hotel_suggestions(destination)
-        st.markdown(f"<h3 class='header'>Recommended Hotels in **{destination}**:</h3>\n" + "\n".join(hotels), unsafe_allow_html=True)
-        
-        st.markdown("<h3 class='subheader'>Let me know if you need modifications or further details! 💬</h3>", unsafe_allow_html=True)
+    # Create a content area
+    with st.container():
+        st.markdown("<div class='content'>", unsafe_allow_html=True)
+
+        if st.sidebar.button("Plan My Trip"):
+            st.markdown(f"<h3 class='header'>Nice to meet you, **{user_name}**! 🎉</h3>", unsafe_allow_html=True)
+            
+            if travel_preference.lower() == "flight":
+                user_location_iata = get_iata_code(user_location)
+                destination_iata = get_iata_code(destination)
+                flights = get_flight_options(user_location_iata, destination_iata)
+                st.markdown("<h3 class='subheader'>Available Flights: ✈️</h3>", unsafe_allow_html=True)
+                for flight in flights:
+                    st.markdown(f"<div class='card'>{flight}</div>", unsafe_allow_html=True)
+            
+            st.markdown("<h3 class='subheader'>Generating your detailed itinerary with timestamps... ⏳</h3>", unsafe_allow_html=True)
+            itinerary = get_itinerary(destination, experience, days)
+            st.markdown(f"<h3 class='header'>Here's your plan for **{destination}**:</h3>\n{itinerary}", unsafe_allow_html=True)
+            
+            st.markdown("<h3 class='subheader'>Finding the best hotel options... 🏨</h3>", unsafe_allow_html=True)
+            hotels = get_hotel_suggestions(destination)
+            st.markdown(f"<h3 class='header'>Recommended Hotels in **{destination}**:</h3>", unsafe_allow_html=True)
+            for hotel in hotels:
+                st.markdown(f"<div class='card'>{hotel}</div>", unsafe_allow_html=True)
+            
+            st.markdown("<h3 class='subheader'>Let me know if you need modifications or further details! 💬</h3>", unsafe_allow_html=True)
+
+        st.markdown("</div>", unsafe_allow_html=True)  # Close the content area
 
 if __name__ == "__main__":
     main()
