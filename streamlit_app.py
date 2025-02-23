@@ -55,9 +55,31 @@ def get_itinerary(destination, experience, days):
     return response.text if response else "Couldn't generate an itinerary."
 
 def main():
+    st.markdown(
+        """
+        <style>
+        .main {
+            background-color: #f0f8ff;  /* Light blue background */
+        }
+        .header {
+            color: #2e8b57;  /* Sea green */
+        }
+        .subheader {
+            color: #4682b4;  /* Steel blue */
+        }
+        .highlight {
+            background-color: #ffe4e1;  /* Misty rose */
+            padding: 10px;
+            border-radius: 5px;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
     st.title("🌍 WanderBot: Your AI Travel Guide 🧳")
     
-    st.sidebar.title("User Information")
+    st.sidebar.title("✈️ User Information")
     user_name = st.sidebar.text_input("What's your name?", "Traveler")
     user_location = st.sidebar.text_input("From where are you planning your trip?", "New York")
     destination = st.sidebar.text_input("Where are you thinking of traveling to?", "Paris")
@@ -66,25 +88,25 @@ def main():
     days = st.sidebar.number_input("How many days do you plan to stay?", min_value=1, max_value=30, value=5)
     
     if st.sidebar.button("Plan My Trip"):
-        st.write(f"### Nice to meet you, {user_name}!")
+        st.markdown(f"<h3 class='header'>Nice to meet you, **{user_name}**! 🎉</h3>", unsafe_allow_html=True)
         
         if travel_preference.lower() == "flight":
             user_location_iata = get_iata_code(user_location)
             destination_iata = get_iata_code(destination)
             flights = get_flight_options(user_location_iata, destination_iata)
-            st.write("### Available Flights:")
+            st.markdown("<h3 class='subheader'>Available Flights: ✈️</h3>", unsafe_allow_html=True)
             for flight in flights:
-                st.write(flight)
+                st.markdown(f"- {flight}")
         
-        st.write("### Generating your detailed itinerary with timestamps...")
+        st.markdown("<h3 class='subheader'>Generating your detailed itinerary with timestamps... ⏳</h3>", unsafe_allow_html=True)
         itinerary = get_itinerary(destination, experience, days)
-        st.write(f"### Here's your plan for {destination}:\n{itinerary}")
+        st.markdown(f"<h3 class='header'>Here's your plan for **{destination}**:</h3>\n{itinerary}", unsafe_allow_html=True)
         
-        st.write("### Finding the best hotel options...")
+        st.markdown("<h3 class='subheader'>Finding the best hotel options... 🏨</h3>", unsafe_allow_html=True)
         hotels = get_hotel_suggestions(destination)
-        st.write(f"### Recommended Hotels in {destination}:\n" + "\n".join(hotels))
+        st.markdown(f"<h3 class='header'>Recommended Hotels in **{destination}**:</h3>\n" + "\n".join(hotels), unsafe_allow_html=True)
         
-        st.write("### Let me know if you need modifications or further details!")
+        st.markdown("<h3 class='subheader'>Let me know if you need modifications or further details! 💬</h3>", unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
