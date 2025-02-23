@@ -3,6 +3,7 @@ import google.generativeai as genai
 import requests
 import json
 from datetime import datetime, timedelta
+import random
 
 # Configuration
 GEMINI_API_KEY = "AIzaSyBPkVjk9aYoAvjDnHYPbHxD66A-DCIeC94"
@@ -54,49 +55,44 @@ def is_indian_city(city_name):
     return response.text.strip().lower() == "yes"
 
 def get_train_options(source, destination):
-    """Get AI-generated train options between cities"""
     try:
         source_in_india = is_indian_city(source)
         dest_in_india = is_indian_city(destination)
         currency = "INR" if source_in_india or dest_in_india else "USD"
         
-        prompt = f"""List 5 trains that run between {source} and {destination}. 
-        For each train include:
-        - Train name and number
-        - Departure and arrival times
-        - Duration
-        - Available classes (like AC 1st Class, AC 2 Tier, etc.)
-        - Approximate fare range in {currency}
-        Format each train on new lines with emoji 🚂. Do not use asterisks (*) in the response."""
+        prompt = f"""List 5 trains that run between {source} and {destination}. Format as shown:
+        🚂 Train Name - Number
+        ├─ Departure: HH:MM AM/PM ({source})
+        ├─ Arrival: HH:MM AM/PM ({destination})
+        ├─ Duration: X hours Y minutes
+        ├─ Classes: [list available classes]
+        └─ Fare Range: {currency} [range]
+        
+        Ensure each train detail is on a new line with proper indentation using ├─ and └─."""
         
         model = genai.GenerativeModel("gemini-pro")
         response = model.generate_content(prompt)
-        trains = response.text.strip().split('\n')
-        return [train for train in trains if train.strip()]
+        return response.text.strip().split('\n\n')
     except Exception as e:
         return ["Unable to find train information at the moment."]
 
 def get_hotel_suggestions(destination, itinerary):
-    """Get AI-generated hotel suggestions based on itinerary locations"""
     try:
         is_india = is_indian_city(destination)
         currency = "INR" if is_india else "USD"
         
-        prompt = f"""Based on this itinerary for {destination}:
-        {itinerary}
+        prompt = f"""Suggest 5 hotels near {destination} based on the itinerary. Format as shown:
+        🏨 Hotel Name
+        ├─ Location: [area/neighborhood]
+        ├─ Price: {currency} [range] per night
+        ├─ Rating: [1-5] ⭐
+        └─ Amenities: [key features]
         
-        Suggest 5 hotels that would be convenient for this schedule. For each hotel include:
-        - Hotel name
-        - Location/Area
-        - Price range per night in {currency}
-        - Star rating (use actual ⭐ emoji instead of asterisk)
-        - Key amenities
-        Format each hotel on new lines with emoji 🏨. Do not use asterisks (*) in the response."""
+        Ensure each hotel detail is on a new line with proper indentation using ├─ and └─."""
         
         model = genai.GenerativeModel("gemini-pro")
         response = model.generate_content(prompt)
-        hotels = response.text.strip().split('\n')
-        return [hotel for hotel in hotels if hotel.strip()]
+        return response.text.strip().split('\n\n')
     except Exception as e:
         return ["Unable to find hotel suggestions at the moment."]
 
@@ -109,46 +105,136 @@ def get_itinerary(destination, experience, days):
     response = model.generate_content(prompt)
     return response.text if response else "Couldn't generate an itinerary."
 
+def get_fun_fact():
+    """Get a random travel-related fun fact"""
+    facts = [
+        "✈️ The world's shortest commercial flight is in Scotland, lasting only 1.5 minutes!",
+        "🌍 There are 195 countries in the world to explore.",
+        "🏨 The oldest hotel in the world has been operating since 705 AD in Japan.",
+        "🚂 The longest train journey in the world takes 18 days from Portugal to Vietnam.",
+        "🌟 The Northern Lights can be seen from 60 different countries.",
+        "🏖️ Singapore has a man-made waterfall that's 130 feet tall!",
+        "🗺️ Vatican City is the smallest country in the world.",
+        "🌅 There's a pink lake in Australia called Lake Hillier.",
+        "🏔️ Mount Everest grows about 4mm taller every year!",
+        "🌊 The Great Barrier Reef is the largest living structure on Earth."
+    ]
+    return random.choice(facts)
+
+def format_response(text):
+    """Format response with proper line breaks and remove markdown"""
+    text = text.replace('**', '')  # Remove bold markdown
+    text = text.replace('├─', '\n├─')  # Add line breaks before tree symbols
+    text = text.replace('└─', '\n└─')  # Add line breaks before tree symbols
+    return text
+
+def get_progress_message():
+    messages = [
+        "🔮 Consulting the travel oracle...",
+        "🌟 Sprinkling some wanderlust magic...",
+        "🎨 Crafting your perfect journey...",
+        "🌈 Weaving travel dreams together...",
+        "✨ Adding a touch of magic to your plans..."
+    ]
+    return random.choice(messages)
+
 def main():
     st.markdown(
         """
         <style>
         .main {
-            background-color: #0e1117;
+            background: linear-gradient(135deg, #000428 0%, #004e92 100%);
             color: #ffffff;
+            font-family: 'Quicksand', sans-serif;
         }
         .css-1d391kg {
-            background-color: #1e2126;
+            background: linear-gradient(45deg, #000428 0%, #004e92 100%);
         }
         .content {
             padding: 20px;
         }
         .header {
-            color: #00ff9f;
-            font-size: 1.5em;
-            margin: 10px 0;
+            color: #FFE5B4;
+            font-size: 1.8em;
+            margin: 15px 0;
             font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            background: linear-gradient(90deg, rgba(0,4,40,0.8) 0%, rgba(0,78,146,0.8) 100%);
+            padding: 15px 25px;
+            border-radius: 15px;
+            border-left: 5px solid #FFD700;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
         .subheader {
-            color: #00c4ff;
-            font-size: 1.2em;
-            margin: 10px 0;
+            color: #E0FFFF;
+            font-size: 1.4em;
+            margin: 12px 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
         }
         .card {
-            background-color: #1e2126;
-            border: 1px solid #2d3035;
-            border-radius: 5px;
-            padding: 15px;
-            margin: 10px 0;
+            background: linear-gradient(45deg, rgba(0,4,40,0.9) 0%, rgba(0,78,146,0.9) 100%);
+            border: 1px solid #FFD700;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
             color: #ffffff;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            white-space: pre-line;
         }
-        .error-card {
-            background-color: #2d1215;
-            border: 1px solid #ff4444;
-            border-radius: 5px;
+        .card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            border-color: #FFF8DC;
+        }
+        .fun-fact-card {
+            background: linear-gradient(45deg, #2C3E50 0%, #3498DB 100%);
+            border: 2px solid #FFD700;
+            border-radius: 15px;
             padding: 15px;
             margin: 10px 0;
-            color: #ff4444;
+            color: #FFF8DC;
+            animation: glow 2s infinite alternate;
+        }
+        .loading-card {
+            background: linear-gradient(45deg, #000428 0%, #004e92 100%);
+            border: 2px solid #FFD700;
+            border-radius: 15px;
+            padding: 15px;
+            margin: 10px 0;
+            color: #FFF8DC;
+            animation: pulse 2s infinite;
+        }
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 10px #FFD700, 0 0 20px #FFD700, 0 0 30px #FFD700;
+            }
+            to {
+                box-shadow: 0 0 20px #FFD700, 0 0 30px #FFD700, 0 0 40px #FFD700;
+            }
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #251B37;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #FFDBA4;
+            border-radius: 5px;
+        }
+        /* Sidebar styling */
+        .css-1d391kg .stSelectbox, 
+        .css-1d391kg .stTextInput {
+            background-color: #372948;
+            color: #ffffff;
+            border-radius: 5px;
         }
         </style>
         """,
@@ -170,9 +256,11 @@ def main():
         st.markdown("<div class='content'>", unsafe_allow_html=True)
 
         if st.sidebar.button("Plan My Trip"):
-            st.markdown(f"<div class='header'>Nice to meet you, {user_name}! 🎉</div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='header'>Welcome to your magical journey, {user_name}! ✨</div>", unsafe_allow_html=True)
             
             if travel_preference.lower() == "flight":
+                st.markdown(f"<div class='fun-fact-card'>{get_fun_fact()}</div>", unsafe_allow_html=True)
+                st.markdown("<div class='loading-card'>🔍 Searching for the perfect flights...</div>", unsafe_allow_html=True)
                 user_location_iata = get_iata_code(user_location)
                 destination_iata = get_iata_code(destination)
                 flights = get_flight_options(user_location_iata, destination_iata)
@@ -180,17 +268,19 @@ def main():
                 for flight in flights:
                     st.markdown(f"<div class='card'>{flight}</div>", unsafe_allow_html=True)
             elif travel_preference.lower() == "train":
-                st.markdown("<div class='subheader'>Available Trains: 🚂</div>", unsafe_allow_html=True)
-                st.markdown("<div class='card'>Searching for trains...</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='fun-fact-card'>{get_fun_fact()}</div>", unsafe_allow_html=True)
+                st.markdown("<div class='loading-card'>🚂 Finding magical train journeys...</div>", unsafe_allow_html=True)
                 trains = get_train_options(user_location, destination)
                 for train in trains:
+                    formatted_train = format_response(train)
                     if "unable" in train.lower():
-                        st.markdown(f"<div class='error-card'>{train}</div>", unsafe_allow_html=True)
+                        st.markdown(f"<div class='error-card'>{formatted_train}</div>", unsafe_allow_html=True)
                     else:
-                        st.markdown(f"<div class='card'>{train}</div>", unsafe_allow_html=True)
+                        st.markdown(f"<div class='card'>{formatted_train}</div>", unsafe_allow_html=True)
 
-            st.markdown("<div class='subheader'>Generating your detailed itinerary...</div>", unsafe_allow_html=True)
-            itinerary = get_itinerary(destination, experience, days)
+            st.markdown(f"<div class='fun-fact-card'>{get_fun_fact()}</div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='loading-card'>{get_progress_message()}</div>", unsafe_allow_html=True)
+            itinerary = format_response(get_itinerary(destination, experience, days))
             st.markdown(f"<div class='header'>Here's your plan for {destination}:</div>", unsafe_allow_html=True)
             st.markdown(f"<div class='card'>{itinerary}</div>", unsafe_allow_html=True)
             
@@ -198,9 +288,10 @@ def main():
             hotels = get_hotel_suggestions(destination, itinerary)
             st.markdown(f"<div class='header'>Recommended Hotels in {destination}:</div>", unsafe_allow_html=True)
             for hotel in hotels:
-                st.markdown(f"<div class='card'>{hotel}</div>", unsafe_allow_html=True)
+                formatted_hotel = format_response(hotel)
+                st.markdown(f"<div class='card'>{formatted_hotel}</div>", unsafe_allow_html=True)
             
-            st.markdown("<div class='subheader'>Let me know if you need modifications or further details! 💬</div>", unsafe_allow_html=True)
+            st.markdown("<div class='subheader'>See you again 👋</div>", unsafe_allow_html=True)
 
         st.markdown("</div>", unsafe_allow_html=True)  # Close the content area
 
