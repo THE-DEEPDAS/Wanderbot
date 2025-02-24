@@ -231,7 +231,7 @@ def main():
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
         .subheader {
-            color: #E0FFFF;
+            color: #B0E0E6;  /* Changed from #E0FFFF to a darker shade */
             font-size: 1.4em;
             margin: 12px 0;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
@@ -253,7 +253,7 @@ def main():
             border-color: #FFF8DC;
         }
         .fun-fact-card {
-            background: linear-gradient(45deg, #2C3E50 0%, #3498DB 100%);
+            background: linear-gradient(45deg, #4B0082 0%, #8A2BE2 100%);  /* Changed to purple gradient */
             border: 2px solid #FFD700;
             border-radius: 15px;
             padding: 15px;
