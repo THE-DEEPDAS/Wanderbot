@@ -1,0 +1,168 @@
+WANDERBOT CODE DOCUMENTATION - LINE BY LINE EXPLANATION
+
+1. IMPORTS AND SETUP
+-------------------
+import streamlit as st              - Creates the web interface
+import google.generativeai as genai - Powers the AI features using Google's Gemini
+import requests                     - Makes HTTP requests to external services
+import json                        - Handles JSON data
+from PIL import Image              - Processes images
+from io import BytesIO             - Handles binary data in memory
+
+2. API CONFIGURATION
+-------------------
+GEMINI_API_KEY         - For AI functionality
+EVENT_API_KEY         - For getting travel events
+AVIATIONSTACK_API_KEY - For flight information
+
+3. CORE FUNCTIONS
+----------------
+load_and_resize_image():
+- Uses @st.cache_data for performance
+- Downloads and resizes images to 400x300
+- Returns None if image fails to load
+
+get_iata_code():
+- Gets airport codes (e.g., JFK for New York)
+- Uses AI to understand city names
+- Returns Unknown if not found
+
+get_station_code():
+- Gets Indian railway station codes
+- Returns in uppercase format
+- Uses AI for accuracy
+
+is_indian_city():
+- Checks if a city is in India
+- Returns yes/no via AI
+- Used for currency selection
+
+4. TRAVEL FUNCTIONS
+------------------
+get_flight_options():
+- Uses AviationStack API
+- Searches real flight data
+- Returns formatted flight info
+
+get_train_options():
+- Generates AI-based train schedules
+- Includes times and prices
+- Handles both Indian and international routes
+
+get_hotel_suggestions():
+- AI-powered hotel recommendations
+- Includes location, price, rating
+- Shows amenities and features
+
+5. HELPER FUNCTIONS
+------------------
+format_response():
+- Cleans AI responses
+- Adds proper formatting
+- Makes text readable
+
+get_fun_fact():
+- Random travel facts
+- Adds engagement
+- Uses emojis
+
+get_progress_message():
+- Loading messages
+- Keeps users engaged
+- Animated display
+
+6. UI COMPONENTS
+---------------
+show_developer_info():
+- Developer card
+- Social links
+- Animated display
+
+set_page_configuration():
+- Sets up Streamlit page
+- Wide layout
+- Custom icon
+
+7. MAIN APPLICATION
+------------------
+main():
+- Sets up page
+- Handles session state
+- Creates two-column layout
+- Processes user input
+- Shows results
+
+8. CSS STYLING
+-------------
+- Gradient backgrounds
+- Card animations
+- Custom scrollbars
+- Responsive design
+- Interactive elements
+- Hero section
+- Developer card
+
+9. ERROR HANDLING
+----------------
+try-except blocks for:
+- Image loading
+- API requests
+- AI responses
+- Data processing
+
+10. PERFORMANCE FEATURES
+-----------------------
+- Image caching
+- Session state management
+- Efficient API calls
+- Optimized UI updates
+
+11. USER EXPERIENCE
+------------------
+- Loading animations
+- Progress messages
+- Error feedback
+- Interactive elements
+- Responsive design
+
+12. DATA FLOW
+------------
+1. User enters travel details
+2. Form submission triggers processing
+3. AI generates content
+4. APIs fetch real data
+5. Results displayed in cards
+6. Interactive elements update
+
+13. SECURITY
+-----------
+- API key protection
+- Error handling
+- Input validation
+- Safe HTML rendering
+
+14. CUSTOMIZATION OPTIONS
+------------------------
+- Add new APIs
+- Modify AI prompts
+- Update styling
+- Add features
+- Change animations
+
+15. DEPLOYMENT NOTES
+-------------------
+Requirements:
+- Python 3.7+
+- Streamlit
+- Google Generative AI
+- PIL
+- Requests
+
+Environment Variables:
+Set these before running:
+- GEMINI_API_KEY
+- EVENT_API_KEY
+- AVIATIONSTACK_API_KEY
+
+Run with:
+streamlit run streamlit_app.py
