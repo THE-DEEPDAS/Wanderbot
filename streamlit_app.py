@@ -8,7 +8,7 @@ from PIL import Image
 from io import BytesIO
 
 # Configuration
-GEMINI_API_KEY = "AIzaSyBMtWuT-lSCW1bMYfF8swUJXCyY9gc1lIs"
+GEMINI_API_KEY = "AIzaSyB_G0L0lkcGn_Pu_4mSj4vNJsYbaj3wizI"
 EVENT_API_KEY = "AIDZRLNW2HGLNDOLIHPG"
 AVIATIONSTACK_API_KEY = "94ac4623810c8348b283768fac83dafc"
 
