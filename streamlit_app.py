@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 import random
 
 # Configuration
-GEMINI_API_KEY = "AIzaSyBPkVjk9aYoAvjDnHYPbHxD66A-DCIeC94"
+GEMINI_API_KEY = "AIzaSyB_G0L0lkcGn_Pu_4mSj4vNJsYbaj3wizI"
 EVENT_API_KEY = "25UDUKITT5JIIZJDC3"
 IRCTC_API_KEY = "b32592978dmshdd659900c70a926p10e680jsne8a7f2500406"
 AVIATIONSTACK_API_KEY = "1f285cc528a60fd27f947b918aa048b9"
