@@ -29,13 +29,13 @@ def load_and_resize_image(url, target_size=(400, 300)):
 
 def get_iata_code(city_name):
     prompt = f"What is the IATA code for {city_name}?"
-    model = genai.GenerativeModel("gemini-pro")
+    model = genai.GenerativeModel("gemini-1.5-flash")
     response = model.generate_content(prompt)
     return response.text.strip() if response else "Unknown"
 
 def get_station_code(city_name):
     prompt = f"What is the main railway station code for {city_name} in India? Return only the station code in caps."
-    model = genai.GenerativeModel("gemini-pro")
+    model = genai.GenerativeModel("gemini-1.5-flash")
     response = model.generate_content(prompt)
     return response.text.strip() if response else "Unknown"
 
@@ -63,7 +63,7 @@ def get_flight_options(origin, destination):
 def is_indian_city(city_name):
     """Check if a city is in India"""
     prompt = f"Is {city_name} a city in India? Answer only 'yes' or 'no'."
-    model = genai.GenerativeModel("gemini-pro")
+    model = genai.GenerativeModel("gemini-1.5-flash")
     response = model.generate_content(prompt)
     return response.text.strip().lower() == "yes"
 
@@ -83,7 +83,7 @@ def get_train_options(source, destination):
         
         Ensure each train detail is on a new line with proper indentation using ├─ and └─."""
         
-        model = genai.GenerativeModel("gemini-pro")
+        model = genai.GenerativeModel("gemini-1.5-flash")
         response = model.generate_content(prompt)
         return response.text.strip().split('\n\n')
     except Exception as e:
@@ -94,16 +94,26 @@ def get_hotel_suggestions(destination, itinerary):
         is_india = is_indian_city(destination)
         currency = "INR" if is_india else "USD"
         
-        prompt = f"""Suggest 5 hotels near {destination} based on the itinerary. Format as shown:
+        # Extract key activities and locations from itinerary
+        itinerary_summary = f"""Considering these activities:
+        {' '.join(itinerary.split()[:100])}..."""  # Take first 100 words to stay within context
+        
+        prompt = f"""Based on this travel plan: {itinerary_summary}
+
+        Suggest 5 hotels near {destination} that are conveniently located for the planned activities.
+        Consider proximity to major attractions and transport hubs mentioned in the itinerary.
+        Format each hotel as shown:
+
         🏨 Hotel Name
-        ├─ Location: [area/neighborhood]
+        ├─ Location: [area/neighborhood, mention nearby attractions]
         ├─ Price: {currency} [range] per night
         ├─ Rating: [1-5] ⭐
-        └─ Amenities: [key features]
+        └─ Amenities: [key features relevant to the itinerary]
         
-        Ensure each hotel detail is on a new line with proper indentation using ├─ and └─."""
+        Ensure each hotel detail is on a new line with proper indentation using ├─ and └─.
+        Focus on hotels that best match the itinerary's activities and locations."""
         
-        model = genai.GenerativeModel("gemini-pro")
+        model = genai.GenerativeModel("gemini-1.5-flash")
         response = model.generate_content(prompt)
         return response.text.strip().split('\n\n')
     except Exception as e:
@@ -114,7 +124,7 @@ def get_itinerary(destination, experience, days):
     The schedule should include specific timestamps for activities, travel, and meals. 
     Ensure realism and do not use asterisks (*) in the response. Use actual formatting like 'Important:' or 'Note:' instead."""
     
-    model = genai.GenerativeModel("gemini-pro")
+    model = genai.GenerativeModel("gemini-1.5-flash")
     response = model.generate_content(prompt)
     return response.text if response else "Couldn't generate an itinerary."
 
